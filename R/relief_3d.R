@@ -3,7 +3,7 @@ library(fields)
 library(ncdf4)
 library(rgl)
 
-nc = nc_open("C:/Users/jdanielou/Desktop/armor-3d-southpacific-to-monthly-199301-202212.nc")
+nc = nc_open("C:/Users/jdanielou/Desktop/glorys-v1-southpacific-to-monthly-199301-199303.nc")
 
 relief_3d = function(nc, varid, longitude = "longitude", latitude = "latitude", depths = "depth", scale_factor = 0.3, load = TRUE){
   
@@ -76,4 +76,4 @@ relief_3d = function(nc, varid, longitude = "longitude", latitude = "latitude", 
  return(list(var = var, lon = lon, lat = lat, depth = depth))
 }
 
-data = relief_3d(nc, varid = "to", load = FALSE)
+data = relief_3d(nc, varid = "to", load = TRUE)

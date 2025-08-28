@@ -104,7 +104,7 @@ obs_cluster   = rename_list(obs_cluster)
 # Redéfinir l’ordre des clusters
 clusters = names(df_all)
 
-cluster_labels = c("1" = "SPG", "2" = "TSW", "3" = "NWM",
+cluster_labels = c("1" = "SPG", "2" = "TSW", "3" = "POI",
                    "4" = "TSE", "5" = "TSP", "6" = "PNG")
 
 # --- Taylor Diagram par cluster ---
@@ -165,7 +165,7 @@ legend("topright",
        col = colors, pch = 15,
        pt.cex = 1.2, cex = 1,
        x.intersp = 0.64,
-       title = "Clusters",
+       title = "Regions",
        inset = c(-0.06, 0.12), xpd = TRUE)
 
 dev.copy(png, plot_path, width = 16, height = 8, units = "in", res = 150)

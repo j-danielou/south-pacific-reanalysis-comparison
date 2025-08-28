@@ -105,31 +105,31 @@ oni_hycom = calculate_oni(
 # -------------------------
 
 plot_oni_comparison = function(oni_model, oni_ersst, dates_3mois, model_name, model_color) {
-  el_nino_colors = c("#FFCCCC", "#FF9999", "#FF6666", "#FF3333", "#FF0000")
-  la_nina_colors = c("#CCCCFF", "#9999FF", "#6666FF", "#3333FF", "#0000FF")
+  # el_nino_colors = c("#FFCCCC", "#FF9999", "#FF6666", "#FF3333", "#FF0000")
+  # la_nina_colors = c("#CCCCFF", "#9999FF", "#6666FF", "#3333FF", "#0000FF")
   el_nino_thresholds = c(0.5, 1.0, 1.5, 2.0, 3.0)
   la_nina_thresholds = c(-0.5, -1.0, -1.5, -2.0, -3.0)
   
-  xlim_val = if (model_name != "HYCOM") c(8811, 18557) else c(9077, 16447)
+  xlim_val = if (model_name != "HYCOM") c(8790, 18620) else c(9060, 16450)
   
   plot(dates_3mois, oni_model, type = "n", ylim = c(-2.79, 2.79), xlim = xlim_val,
        xlab = "", ylab = "", xaxt = "n", yaxt = "n", bty = "n")
   
-  title(main = paste(model_name, "(RMSE =", round(sqrt(mean((oni_model - oni_ersst)^2, na.rm = TRUE)), 3), ")"),
-        cex.main = 1.8, line = 0.35) 
+  # title(main = paste(model_name, "(RMSE =", round(sqrt(mean((oni_model - oni_ersst)^2, na.rm = TRUE)), 3), ")"),
+  #       cex.main = 1.8, line = 0.35) 
   
-  for (i in seq_along(el_nino_thresholds)) {
-    ybottom = if (i == 1) 0 else el_nino_thresholds[i - 1]
-    ytop = el_nino_thresholds[i]
-    rect(min(dates_3mois), ybottom, max(dates_3mois), ytop, col = el_nino_colors[i], border = NA)
-  }
-  for (i in seq_along(la_nina_thresholds)) {
-    ytop = if (i == 1) 0 else la_nina_thresholds[i - 1]
-    ybottom = la_nina_thresholds[i]
-    rect(min(dates_3mois), ybottom, max(dates_3mois), ytop, col = la_nina_colors[i], border = NA)
-  }
-  
-  abline(h = seq(-2.5, 2.5, 0.5), col = "gray85", lty = 2)
+   # for (i in seq_along(el_nino_thresholds)) {
+   #   ybottom = if (i == 1) 0 else el_nino_thresholds[i - 1]
+   #   ytop = el_nino_thresholds[i]
+   #   rect(min(dates_3mois), ybottom, max(dates_3mois), ytop, col = el_nino_colors[i], border = NA)
+   # }
+   # for (i in seq_along(la_nina_thresholds)) {
+   #   ytop = if (i == 1) 0 else la_nina_thresholds[i - 1]
+   #   ybottom = la_nina_thresholds[i]
+   #   rect(min(dates_3mois), ybottom, max(dates_3mois), ytop, col = la_nina_colors[i], border = NA)
+   # }
+
+  abline(h = seq(-2.5, 2.5, 0.5), col = "gray", lty = 2)
   abline(h = 0, col = "black", lwd = 2)
   
   lines(dates_3mois, oni_model, col = model_color, lwd = 3)
@@ -139,19 +139,27 @@ plot_oni_comparison = function(oni_model, oni_ersst, dates_3mois, model_name, mo
   if (model_name == "GLORYS") mtext("ONI Index (°C)", side = 2, line = 3, cex = 1.2)
 
   years = seq(from = as.Date(format(min(dates_3mois), "%Y-01-01")),
-              to = as.Date(format(max(dates_3mois) + 280, "%Y-01-01")),
+              to = as.Date(format(max(dates_3mois) , "%Y-01-01")),
               by = "year")
-  axis(1, at = years, labels = FALSE)
-  text(x = years, y = par("usr")[3] - 0.2,
-       labels = format(years, "%Y"), srt = 45, adj = 1,
+  years_subset = c(years[seq(1, length(years), by = 3)], 18993)
+  axis(1, at = years_subset, labels = FALSE)
+  
+  text(x = years_subset, y = par("usr")[3] - 0.3,
+       labels = format(years_subset, "%Y"), srt = 0, adj = 0.5,
        xpd = TRUE, cex = 1.6)
   
+  # axis(1, at = years, labels = FALSE)
+  # text(x = years, y = par("usr")[3] - 0.2,
+  #      labels = format(years, "%Y"), srt = 0, adj = 1,
+  #      xpd = TRUE, cex = 1.6)
+  # 
   
-  legend("topright", legend = c(paste("ONI", model_name), "ONI ERSST"),
+  if (model_name == "BRAN"){
+    legend("topright", legend = c(paste("ONI Model"), "ONI ERSST"),
          text.col = "gray99", col = c(model_color, "purple"),
-         lty = c(1, 2), lwd = 2.5, bty = "0", bg = "gray55", cex = 1.4)
+         lty = c(1, 2), lwd = 2.5, bty = "0", bg = "gray", cex = 1.4)
+  }
 }
-
 # -------------------------
 # VISUALISATION
 # -------------------------
@@ -159,11 +167,11 @@ plot_oni_comparison = function(oni_model, oni_ersst, dates_3mois, model_name, mo
 x11(width = 15, height = 12)
 par(mfrow = c(3, 1), oma = c(0, 0.5, 0, 0))
 
-plot_oni_comparison(oni_bran$oni_model, oni_bran$oni_ersst, oni_bran$dates_3mois, "BRAN", "gold")
+plot_oni_comparison(oni_model = oni_bran$oni_model, oni_ersst = oni_bran$oni_ersst, dates_3mois = oni_bran$dates_3mois, model_name = "BRAN", model_color = "gold")
 plot_oni_comparison(oni_glorys$oni_model, oni_glorys$oni_ersst, oni_glorys$dates_3mois, "GLORYS", "gold")
 plot_oni_comparison(oni_hycom$oni_model, oni_hycom$oni_ersst, oni_hycom$dates_3mois, "HYCOM", "gold")
 
 
-dev.copy(png, file = "C:/Users/jdanielou/Desktop/plots_internship/plot/oni_index/oni_comparison_all.png", width = 14, height = 13, units = "in", res = 150)
+dev.copy(png, file = "C:/Users/jdanielou/Desktop/oni_comparison_all.png", width = 14, height = 13, units = "in", res = 150)
 dev.off()
 

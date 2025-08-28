@@ -99,24 +99,24 @@ for (i in 1:6) {
   # Tracer les autres modèles et stocker r/RMSE
   r_text = "r-values : "
   rmse_text = "RMSE : "
-  
+
   for (j in 2:length(model_names)) {
     mod_df = anomalies[[j]][[cluster]] %>%
       filter(time >= date_min & time <= date_max)
-    
+
     lines(mod_df$time, mod_df$anomaly, col = colors[j], lwd = 1.5)
-    
+
     common = inner_join(cmems_df, mod_df, by = "time", suffix = c("_ref", "_mod"))
     r = round(cor(common$anomaly_ref, common$anomaly_mod, use = "complete.obs"), 2)
     rmse = round(sqrt(mean((common$anomaly_ref - common$anomaly_mod)^2, na.rm = TRUE)), 2)
-    
+
     abbrev = substr(toupper(model_names[j]), 1, 1)  # G, B, H
     r_text = paste0(r_text, abbrev, "=", r, ifelse(j < length(model_names), "; ", ""))
     rmse_text = paste0(rmse_text, abbrev, "=", rmse, ifelse(j < length(model_names), "; ", ""))
   }
-  
-  # Affichage des valeurs r/RMSE en haut du plot
-  mtext(paste(r_text, "  ", rmse_text), side = 3, line = 0.2, cex = 1.1)
+
+  #Affichage des valeurs r/RMSE en haut du plot
+  #mtext(paste(r_text, "  ", rmse_text), side = 4, line = 0.2, cex = 1.1)
   
   # Axe x seulement pour dernière ligne
   if (i == 6) {
@@ -125,5 +125,5 @@ for (i in 1:6) {
   }
   
 }  
-dev.copy(png, file = "C:/Users/jdanielou/Desktop/climato-anomalies-cluster-sss-test.png", width = 18, height = 10, units = "in", res = 150)
+dev.copy(png, file = "C:/Users/jdanielou/Desktop/climato-anomalies-cluster-sss.png", width = 18, height = 10, units = "in", res = 150)
 dev.off() 

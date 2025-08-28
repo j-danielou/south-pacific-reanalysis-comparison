@@ -39,7 +39,7 @@ taylor.diagram = function (ref, model, label, add = FALSE,
       axis.ticks = pretty(c(0, maxsd))
       axis.ticks = axis.ticks[axis.ticks <= maxsd]
       axis(1, at = axis.ticks)
-      axis(2, at = axis.ticks)
+      axis(2, at = axis.ticks, las = 1)
       if (sd.arcs[1]) {
         if (length(sd.arcs) == 1) sd.arcs = axis.ticks
         for (sdarc in sd.arcs) {

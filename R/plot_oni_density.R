@@ -55,10 +55,21 @@ calculate_oni = function(model_file, ersst_file, date_start_model, ersst_range =
     oni_ersst[i] = ersst_3mois[i] - mean(clim[c(ifelse(mois_i-1==0,12,mois_i-1), mois_i, ifelse(mois_i+1==13,1,mois_i+1))])
   }
   
+  # classify_oni = function(x) {
+  #   list(
+  #     VS_S = which(x >= 1.5),
+  #     M_W = which(x >= 0.5 & x < 1.5),
+  #     neutral = which(x > -0.5 & x < 0.5),
+  #     W_M = which(x >= -1.5 & x < -0.5)
+  #   )
+  # }
+  
   classify_oni = function(x) {
     list(
-      VS_S = which(x >= 1.5),
-      M_W = which(x >= 0.5 & x < 1.5),
+      VS = which(x >= 2),
+      S = which(x >= 1.5 & x < 2),
+      M = which(x >= 1.0 & x < 1.5),
+      W = which(x >= 0.5 & x < 1.0),
       neutral = which(x > -0.5 & x < 0.5),
       W_M = which(x >= -1.5 & x < -0.5)
     )
@@ -104,14 +115,14 @@ oni_hycom = calculate_oni(
 # FONCTION PLOT DENSITÉ PAR CATÉGORIE
 # -------------------------
 plot_density_per_category = function(oni_bran, oni_glorys, oni_hycom) {
-  categories = c("VS_S", "M_W", "neutral", "W_M")
-  title = c("Very Strong - Strong", "Moderate - Weak", "Neutral", "Weak - Moderate")
+  categories = c("VS", "S", "M", "W", "neutral", "W_M")
+  title = c("Very Strong", "Strong", "Moderate", "Weak", "Neutral", "Weak - Moderate")
   i = 0
   
   colors = c(BRAN = "gold", GLORYS = "forestgreen", HYCOM = "dodgerblue", ERSST = "purple")
   
-  x11(width = 12, height = 10)
-  par(mfrow = c(2, 2), oma = c(0, 0, 0, 0))
+  x11(width = 18, height = 10)
+  par(mfrow = c(2, 3), oma = c(0, 0, 0, 0))
   
   for (cat in categories) {
     i=i+1
@@ -122,8 +133,8 @@ plot_density_per_category = function(oni_bran, oni_glorys, oni_hycom) {
     val_ersst = oni_bran$oni_ersst[oni_bran$categories_ersst[[cat]]]
     
     # Choix conditionnels des labels
-    xlab_val <- if (cat %in% c("neutral", "W_M")) "ONI (°C)" else ""
-    ylab_val <- if (cat %in% c("neutral", "VS_S")) "Density" else ""
+    xlab_val <- if (cat %in% c("neutral")) "ONI (°C)" else ""
+    ylab_val <- if (cat %in% c("W", "VS")) "Density" else ""
     
     # Étendre légèrement les bornes X
     all_vals <- c(val_bran, val_glorys, val_hycom, val_ersst)
@@ -134,7 +145,7 @@ plot_density_per_category = function(oni_bran, oni_glorys, oni_hycom) {
     plot(density(val_ersst, na.rm = TRUE),
          col = colors["ERSST"], lwd = 2, lty = 2,
          xlab = xlab_val, ylab = ylab_val,
-         ylim = c(0, 2), xlim = range_elargie, main = "",
+         ylim = c(0, 4), xlim = range_elargie, main = "",
          las = 1, cex.lab = 1.5, cex.axis = 1.3)
     
     title(main = title[i], line = 0.5, cex.main = 1.6)
@@ -144,7 +155,7 @@ plot_density_per_category = function(oni_bran, oni_glorys, oni_hycom) {
     lines(density(val_hycom, na.rm = TRUE), col = colors["HYCOM"], lwd = 2)
     
     # Légende uniquement pour le panneau "M_W"
-    if (cat == "M_W") {
+    if (cat == "M") {
       legend("topright", legend = c("BRAN", "GLORYS", "HYCOM", "ERSST"),
              col = colors, lty = c(1, 1, 1, 2), lwd = 1.8, bty = "n", cex = 1.2, inset = c(0.05, 0))
     }
@@ -156,5 +167,5 @@ plot_density_per_category = function(oni_bran, oni_glorys, oni_hycom) {
 # -------------------------
 plot_density_per_category(oni_bran, oni_glorys, oni_hycom)
 
-dev.copy(png, file = "C:/Users/jdanielou/Desktop/plots_internship/plot/oni_index/oni_comparison_density.png", width = 11, height = 10, units = "in", res = 150)
+dev.copy(png, file = "C:/Users/jdanielou/Desktop/oni_comparison_density.png", width = 14, height = 10, units = "in", res = 150)
 dev.off()
